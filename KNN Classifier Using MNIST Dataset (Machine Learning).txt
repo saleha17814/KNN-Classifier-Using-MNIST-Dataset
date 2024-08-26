@@ -1,0 +1,51 @@
+import tensorflow as tf
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+import matplotlib.pyplot as plt
+
+# Fetch the MNIST dataset
+mnist = fetch_openml('mnist_784', as_frame=False)
+X, y = mnist.data, mnist.target.astype(int)  # Ensure that y is integer type
+
+# Display the shape of the dataset
+print(X.shape)  # (70000, 784)
+print(y.shape)  # (70000,)
+
+# Function to plot a digit
+def plot_digit(image_data):
+    img = image_data.reshape(28, 28)
+    plt.imshow(img, cmap='binary')
+    plt.axis('off')
+
+# Plot the first digit in the dataset
+s = X[0]
+plot_digit(s)
+plt.show()
+print(f"Label: {y[0]}")
+
+# Plot the 150th digit in the dataset
+s = X[150]
+plot_digit(s)
+plt.show()
+print(f"Label: {y[150]}")
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+
+# Initialize the K-Nearest Neighbors classifier
+knn = KNeighborsClassifier()
+
+# Fit the model to the training data
+knn.fit(X_train, y_train)
+
+# Test the model on the test data
+score = knn.score(X_test, y_test)
+print(f"KNN Classifier accuracy: {score:.4f}")
+
+# Optional: Make a prediction for a single example
+example_idx = 1000
+example = X_test[example_idx].reshape(1, -1)
+predicted_label = knn.predict(example)
+print(f"Predicted label for test example {example_idx}: {predicted_label[0]}")
+print(f"True label: {y_test[example_idx]}")
